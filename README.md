@@ -1,1 +1,1 @@
-# itr
+# Intersection of triangles

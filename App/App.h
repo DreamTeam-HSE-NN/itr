@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_App.h"
+#include "App.h"
 
 class App : public QMainWindow
 {

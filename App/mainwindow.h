@@ -16,12 +16,19 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+   // void paintEvent(QPaintEvent *event);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QList<int> data;
+    int scale;
+    int pointRadius;
+    QPoint center;
+    QVector<QPoint> points;
+    QPoint dragStart;
+    bool isDragging;
 
 public slots:
     void event_PressDraw();

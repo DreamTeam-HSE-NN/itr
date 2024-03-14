@@ -39,22 +39,22 @@ protected:
         triangle.clear();
 
         //получили точки треугольника
-        p1.setX(center.x() + 100*scale);
-        p1.setY(center.y() - 100*scale);
-        p2.setX(center.x() + 200*scale);
-        p2.setY(center.y() - 300*scale);
-        p3.setX(center.x() + 300*scale);
-        p3.setY(center.y() - 200*scale);
+        p1.setX(center.x() + 10*scale);
+        p1.setY(center.y() - 10*scale);
+        p2.setX(center.x() + 20*scale);
+        p2.setY(center.y() - 30*scale);
+        p3.setX(center.x() + 30*scale);
+        p3.setY(center.y() - 20*scale);
         triangle << p1 << p2 << p3;
         painter.drawConvexPolygon(triangle);
 
-        p1.setX(center.x() - 100);
-        p1.setY(center.y() + 100);
-        p2.setX(center.x() - 200);
-        p2.setY(center.y() + 300);
-        p3.setX(center.x() - 300);
-        p3.setY(center.y() + 200);
-        painter.drawLine(p1*scale/100, p2*scale/100);
+        p1.setX(center.x() - 10);
+        p1.setY(center.y() + 10);
+        p2.setX(center.x() - 20);
+        p2.setY(center.y() + 30);
+        p3.setX(center.x() - 30);
+        p3.setY(center.y() + 20);
+        painter.drawLine(p1, p2);
 
         //QPointF p[3];
        // p[0] = p1;

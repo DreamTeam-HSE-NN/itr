@@ -1,10 +1,14 @@
-#include "App.h"
-#include <QtWidgets/QApplication>
+#include "mainwindow.h"
+#include <CoordinateSystem.cpp>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    App w;
+    MainWindow w;
     w.show();
+    //CoordinateSystem coords;
+    //coords.show();
+
     return a.exec();
 }

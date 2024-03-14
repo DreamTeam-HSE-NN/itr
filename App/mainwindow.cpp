@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <CoordinateSystem.cpp>
+#include <QtWidgets>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -7,7 +9,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     scene = new QGraphicsScene();
+    CoordinateSystem *coords = new CoordinateSystem();
+    //scene->addWidget(coords);
     ui->graphicsView->setScene(scene);
+    //ui->widget = coords;
+    //coords->setGeometry(9, 9, 800, 439);
+    QGraphicsProxyWidget *proxy = scene->addWidget(coords);
+    proxy->resize(887, 439);
+    scene->update();
+    //ui->gridLayout_2->addWidget(coords);
+    //coords->show();
 
     // связываем сигнал нажатия кнопки со слотом
     QObject::connect(ui->pushButton_Draw, SIGNAL(clicked()), this, SLOT(event_PressDraw()));
@@ -18,10 +29,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::event_PressDraw()
 {
 
+    QPainter painter(this);
+
+    int width = size().width();
+    int height = size().height();
+    QPointF center = rect().center();
+
+    painter.drawLine(0, center.y(), width, center.y()); // Ось X
+    painter.drawLine(center.x(), 0, center.x(), height); // Ось Y
     // получаем координаты из окон ввода
     int x1 = ui->x1->text().toInt();
     int y1 = ui->y1->text().toInt();
@@ -54,7 +72,9 @@ void MainWindow::event_PressDraw()
 
     //нарисовали треугольник
     scene->addPolygon(triangle, pen, brush);
-
+    pen.setColor(Qt::black);
+    scene->addLine(center.x(), 0, center.x(), height, pen);
+    scene->addLine(center.x(), 0, center.x(), height, pen);
     //перерисовываем форму
     this->repaint();
 

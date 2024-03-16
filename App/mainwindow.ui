@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>905</width>
-    <height>625</height>
+    <width>678</width>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,58 +15,28 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView"/>
-    </item>
     <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>GroupBox</string>
+      <property name="enabled">
+       <bool>true</bool>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="3">
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="y1"/>
+       </item>
+       <item row="1" column="2">
         <widget class="QLineEdit" name="x1"/>
        </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>3</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
+       <item row="1" column="4">
+        <widget class="QLineEdit" name="x3"/>
        </item>
-       <item row="2" column="6">
-        <widget class="QLineEdit" name="y3"/>
+       <item row="2" column="3">
+        <widget class="QLineEdit" name="y2"/>
        </item>
        <item row="1" column="0">
         <widget class="QPushButton" name="pushButton_Draw">
          <property name="text">
           <string>Draw</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3">
-        <widget class="QLineEdit" name="y1"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Y</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_3">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>1</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -77,24 +47,21 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="5">
-        <widget class="QLineEdit" name="y2"/>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLabel" name="label_4">
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>2</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string>Y</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="5">
+       <item row="1" column="3">
         <widget class="QLineEdit" name="x2"/>
        </item>
-       <item row="1" column="6">
-        <widget class="QLineEdit" name="x3"/>
+       <item row="2" column="4">
+        <widget class="QLineEdit" name="y3"/>
+       </item>
+       <item row="0" column="0" colspan="5">
+        <widget class="CoordinateSystem" name="widget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -106,13 +73,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>905</width>
+     <width>678</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CoordinateSystem</class>
+   <extends>QWidget</extends>
+   <header>coordinatesystem.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

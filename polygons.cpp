@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <time.h>
+#include <set>
 #define border 1000
 #define eps 1E-8
 struct Point2d
@@ -14,6 +15,10 @@ struct Point2d
     {
         return (this->x == b.x && this->y == b.y);
     }
+    bool operator<(const Point2d& rhs) const
+    {
+        return this->x < rhs.x;
+    }
 };
 struct Line
 {
@@ -22,6 +27,10 @@ struct Line
 struct Segment
 {
     Point2d start, finish;
+    bool operator<(const Segment& rhs) const
+    {
+        return this->start < rhs.start ;  
+    }
 };
 //it is also necessary to check that 3 points do not belong to one line
 std::vector <std::vector <Segment>> GenerateTriangles(uint32_t numOfTriangles)
@@ -58,21 +67,28 @@ int distance(Point2d p0, Point2d p1)
     return y_span * y_span + x_span * x_span;
 }
 // check that start < finish for segments
-void IntersectionOfSegments(Segment s1, Segment s2, std::vector <Point2d>& vertex)
+bool IntersectionOfSegments(Segment s1, Segment s2, std::vector <Point2d>& vertex)
 {
     Line l1 = { s1.start.y - s1.finish.y, s1.finish.x - s1.start.x, l1.a * s1.start.x + l1.b * s1.start.y };
     Line l2 = { s2.start.y - s2.finish.y, s2.finish.x - s2.start.x, l2.a * s2.start.x + l2.b * s2.start.y };
     double check = l1.a * l2.b - l1.b * l2.a;
     if (abs(check) < eps)
     {
-        return;
+        return false;
     }
     Point2d commonPoint = { (l1.c * l2.b - l2.c * l1.b) / check, (l1.a * l2.c - l1.c * l2.a) / check };
     if (sqrt(distance(commonPoint, s1.start)) + sqrt(distance(commonPoint, s1.finish)) - sqrt(distance(s1.start, s1.finish)) < eps
         && sqrt(distance(commonPoint, s2.start)) + sqrt(distance(commonPoint, s2.finish)) - sqrt(distance(s2.start, s2.finish)) < eps)
     {
         vertex.push_back(commonPoint);
+        return true;
     }
+    return false;
+}
+double triangle_square(double A, double B, double C)
+{
+    double p = 0.5 * (A + B + C);
+    return sqrt(p * (p - A) * (p - B) * (p - C));
 }
 double polar_angle(Point2d p0, Point2d p1) {
     int x_span = p0.x - p1.x;
@@ -118,8 +134,8 @@ std::vector<Point2d> scan(std::vector<Point2d>& points) {
     Point2d anchor;
     int min_idx = -1;
     for (int i = 0; i < points.size(); i++) {
-        int x = points[i].x;
-        int y = points[i].y;
+        double x = points[i].x;
+        double y = points[i].y;
         if (min_idx == -1 || y < points[min_idx].y) {
             min_idx = i;
         }
@@ -142,7 +158,19 @@ std::vector<Point2d> scan(std::vector<Point2d>& points) {
         }
         hull.push_back(sorted_pts[i]);
     }
-    return hull;
+    return sorted_pts;
+}
+double calculatePolygonSquare(std::vector<Point2d> res_pts)// Nikolay's function
+{
+    res_pts.push_back(res_pts[0]);
+    double p1 = 0;
+    double p2 = 0;
+    for (int i = 0; i < res_pts.size() - 1; i++) {
+        p1 += res_pts[i].x * res_pts[i + 1].y;
+        p2 += res_pts[i].y * res_pts[i + 1].x;
+    }
+    double a = 0.5 * (p1 - p2);
+    return a;
 }
 
 int main()
@@ -150,7 +178,7 @@ int main()
     std::srand(std::time(NULL));
     int numOfTriangles;
     std::cin >> numOfTriangles;
-    std::vector<Point2d> ans;
+    std::vector<Point2d> tempAns;
     std::vector <std::vector <Segment>> triangles = GenerateTriangles(numOfTriangles);
     std::vector<std::vector<Point2d>> segments;
     /*for (auto triangle : triangles)
@@ -174,32 +202,82 @@ int main()
     //c.y = 8;
     //std::cout << (sqrt(distance(a, b)) + sqrt(distance(a, c)) == sqrt(distance(b, c)));
     int i = 0;
+    std::set<Segment> InnerPoint;
     while (i < triangles.size())
     {
         for (int j = 0; j < triangles.at(i).size(); ++j)
         {
+            bool checkPoint;
+            int count = 0;
             int k = i + 1;
             while (k < triangles.size())
             {
                 for (int l = 0; l < triangles.at(k).size(); ++l)
                 {
-                    IntersectionOfSegments(triangles.at(i).at(j), triangles.at(k).at(l), ans);
+                    checkPoint = IntersectionOfSegments(triangles.at(i).at(j), triangles.at(k).at(l), tempAns);
+                    if (checkPoint)
+                    {
+                        count++;
+                    }
                 }
-                k += 1;
+                if (count == 1 || count == 0)
+                {
+                    InnerPoint.insert(triangles.at(i).at(j));
+                }
+                k++;
+            }
+            //if (InnerPoint.size() == 2)
+                //IntersectionOfSegments(InnerPoint.at(0), InnerPoint.at(1), ans);  
+        }
+        i++;
+    }
+    std::set<Point2d> ans(tempAns.begin(), tempAns.end());
+    for (Segment const seg : InnerPoint)
+    {
+        int count_polygonsStart = 1;
+        int count_polygonsFinish = 1;
+        for (auto triangle : triangles)
+        {
+            double PolygonSquareStart = 0;
+            double PolygonSquareFinish = 0;
+            std::set<Point2d> coordinates;
+            for (auto const edge : triangle)
+            {
+                coordinates.insert(edge.start);
+                coordinates.insert(edge.finish);
+                double A = distance(seg.start, edge.start);
+                double B = distance(seg.start, edge.finish);
+                double C = distance(edge.start, edge.finish);
+                PolygonSquareStart += triangle_square(A, B, C);
+                A = distance(seg.finish, edge.start);
+                B = distance(seg.finish, edge.finish);
+                PolygonSquareFinish += triangle_square(A, B, C);
+            }
+            std::vector<Point2d> unique_coordinates(coordinates.begin(), coordinates.end());
+            unique_coordinates = scan(unique_coordinates);
+
+            if (calculatePolygonSquare(unique_coordinates) == PolygonSquareStart)
+            {
+                count_polygonsStart++;
+            }
+            if (calculatePolygonSquare(unique_coordinates) == PolygonSquareFinish)
+            {
+                count_polygonsFinish++;
             }
         }
-        i += 1;
+        if (count_polygonsFinish == numOfTriangles)
+        {
+            ans.insert(seg.finish);
+        }
+        if (count_polygonsStart == numOfTriangles)
+        {
+            ans.insert(seg.start);
+        }
     }
-    std::cout << 1;
-    /*std::vector<Point2d> res_pts = scan();
-    res_pts.push_back(res_pts[0]);
-    int p1 = 0;
-    int p2 = 0;
-    for (int i = 0; i < res_pts.size() - 1; i++) {
-        p1 += res_pts[i].x * res_pts[i + 1].y;
-        p2 += res_pts[i].x * res_pts[i + 1].y;
-    }
-    double a = 0.5 * (p1 - p2);
-    std::cout << a << std::endl;*/
+    std::vector<Point2d> vectorAns(ans.begin(), ans.end());
+    std::vector<Point2d> res_pts = scan(vectorAns);
+    double SQUARE = 0;
+    SQUARE = calculatePolygonSquare(res_pts);
+    std::cout << SQUARE<<"\n";
     return 0;
 }

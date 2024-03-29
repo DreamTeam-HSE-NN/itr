@@ -12,10 +12,17 @@ SOURCES += \
     CoordinateSystem1.cpp \
     coordinatesystem.cpp \
     main.cpp \
+    mainwindow.cpp \
+    CoordinateSystem.cpp \
+    CoordinateSystem1.cpp \
+    main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     coordinatesystem.h \
+    coordinatesystem.h \
+    mainwindow.h \
+    ui_mainwindow.h \
     mainwindow.h
 
 FORMS += \

@@ -178,12 +178,13 @@ int main()
     int numOfPolygons;
     std::cin >> numOfPolygons;
     std::vector<Point2d> tempAns;
-    //std::vector <std::vector <Segment>> polygons = GeneratePolygons(numOfPolygons);
+    std::vector <std::vector <Segment>> polygons = GeneratePolygons(numOfPolygons);
+    /*
     std::vector <std::vector<Segment>> polygons;
     for (int i = 0; i < numOfPolygons; ++i)
     {
         std::vector<Segment> sides;
-        for (int j = 0; j < 5; ++j)
+        for (int j = 0; j < 4; ++j)
         {
             Segment side;
             std::cin >> side.start.x >> side.start.y >> side.finish.x >> side.finish.y;
@@ -191,6 +192,7 @@ int main()
         }
         polygons.push_back(sides);
     }
+    */
     int i = 0;
     std::set<Segment> InnerPoint;
     while (i < polygons.size())
@@ -270,7 +272,44 @@ int main()
             ans.insert(seg.start);
         }
     }
-    
+    std::set<Point2d> final_ans;
+    for (auto point : ans)
+    {
+        int count_polygons = 0;
+        for (auto polygon : polygons)
+        {
+            double PolygonSquare = 0;
+            std::set<Point2d> coordinates;
+            for (auto const edge : polygon)
+            {
+                coordinates.insert(edge.start);
+                coordinates.insert(edge.finish);
+                double A = sqrt(distance(point, edge.start));
+                double B = sqrt(distance(point, edge.finish));
+                double C = sqrt(distance(edge.start, edge.finish));
+                if (A + B - C < eps)
+                {
+                    PolygonSquare += 0;
+                }
+                else
+                {
+                    PolygonSquare += triangle_square(A, B, C);
+                }
+            }
+            std::vector<Point2d> unique_coordinates(coordinates.begin(), coordinates.end());
+            unique_coordinates = quicksort(unique_coordinates);
+
+            if (abs(calculatePolygonSquare(unique_coordinates) - PolygonSquare) < eps)
+            {
+                count_polygons++;
+            }
+        }
+        if (count_polygons == numOfPolygons)
+        {
+            final_ans.insert(point);
+        }
+    }
+
     std::cout << "Coordinates of vertecies of polygons: " << "\n";
     for (int i = 0; i < polygons.size(); ++i)
     {
@@ -282,15 +321,15 @@ int main()
     };
 
     std::cout << "Coordinates of intersection area: " << "\n";
-    for (auto pet: ans)
+    for (auto pet: final_ans)
     {
         std::cout << "x: "<< pet.x << " " << "y: " << pet.y << "\n";
     };
     std::cout << "\n";
     
-    if (ans.size() > 2)
+    if (final_ans.size() > 2)
     {
-        std::vector<Point2d> vectorAns(ans.begin(), ans.end());
+        std::vector<Point2d> vectorAns(final_ans.begin(), final_ans.end());
         std::vector<Point2d> res_pts = quicksort(vectorAns);
         double SQUARE = 0;
         SQUARE = calculatePolygonSquare(res_pts);
